@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "抢看看",
+  "version": "0.3.5",
+  "description": "日常库存雷达、仅厦门自提、自动锁单与持续付款提醒。个人信息仅保存在本机。",
+  "minimum_chrome_version": "120",
+  "permissions": ["storage", "alarms", "notifications", "tabs"],
+  "host_permissions": ["https://www.apple.com.cn/*"],
+  "background": {"service_worker": "background.js", "type": "module"},
+  "action": {"default_title": "打开抢看看", "default_icon": "icon.png"},
+  "icons": {"128": "icon.png"},
+  "options_page": "panel.html",
+  "content_scripts": [{
+    "matches": ["https://www.apple.com.cn/shop/*", "https://*.www.apple.com.cn/shop/*", "https://store.apple.com.cn/shop/*", "https://*.store.apple.com.cn/shop/*"],
+    "js": ["checkout.js", "content.js"],
+    "run_at": "document_idle"
+  }, {
+    "matches": ["https://idmsa.apple.com.cn/*", "https://idmsa.apple.com/*", "https://appleid.apple.com/*", "https://account.apple.com/*"],
+    "js": ["login.js"], "all_frames": true, "run_at": "document_idle"
+  }]
+}

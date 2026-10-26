@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.browser-profile/
+*.zip
+*.png
+!extension/icon.png
+catalog.json
+selection.json*
+*preview*

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>抢看看</title><link rel="stylesheet" href="panel.css"></head>
+<body>
+  <main>
+    <header><div class="brand"><img src="icon.png" alt=""><div><span class="eyebrow">LOCAL · APPLE STORE</span><h1>抢看看</h1></div></div><button id="login" class="ghost">苹果账号快捷登录</button></header>
+    <div class="intro"><p>库存雷达，等自提有货就锁单。</p><span>只看厦门自提 · 核对后提交一次 · 提醒你付款</span></div>
+    <div id="notice" role="status" aria-live="polite">先读取官网型号，添加你想购买的配置。</div>
+    <a id="profileIndicator" class="profile-indicator" href="#profileStatus">正在读取个人资料…</a>
+    <div id="profileToast" class="profile-toast" role="status" aria-live="polite" hidden><span id="profileToastIcon" aria-hidden="true">✓</span><strong id="profileToastTitle"></strong><p id="profileToastDetail"></p><button id="dismissProfileToast" type="button" class="ghost">知道了</button></div>
+    <section class="payment-alert" id="paymentAlert" hidden aria-live="polite"><h2>订单已生成，等你付款</h2><p id="paymentText"></p><div class="actions"><button id="openPayment">打开官网付款</button><button id="acknowledgePayment" class="ghost">已知晓，停止提醒</button></div><p class="muted">未点知晓时，每分钟发送一次桌面提醒。支付期限和库存保留以官网订单状态为准。</p></section>
+    <div class="layout">
+      <section class="card catalog"><div class="section-heading"><div><span class="step">01</span><h2>选择商品</h2></div><button id="refresh" class="ghost">读取官网型号</button></div>
+        <div class="form-grid"><label>产品系列<select id="family"><option value="">请读取官网型号</option></select></label><label>具体型号<select id="model" disabled></select></label><label>容量<select id="capacity" disabled></select></label><label>颜色<select id="color" disabled></select></label></div>
+        <div class="add-row"><div><strong id="price">—</strong><small id="sku">尚未选择 SKU</small></div><label class="quantity">数量<input id="quantity" type="number" min="1" max="999" value="1"></label><button id="add" disabled>添加目标</button></div>
+        <p class="muted" id="catalogTime">商品和价格从官网读取。是否有货与限购数量以官网结账为准。</p>
+        <p class="boundary" id="saleNotice" hidden></p>
+        <div class="targets-heading"><h3>目标 SKU</h3><span>添加顺序即优先顺序</span></div>
+        <div class="table-wrap"><table><thead><tr><th>配置</th><th>数量</th><th>厦门自提</th><th></th></tr></thead><tbody id="targets"></tbody></table></div>
+        <div class="empty" id="empty">还没有目标，先添加一个配置。</div>
+        <div class="task" id="task" hidden><h3>锁单流程进度</h3><p id="taskText"></p><div class="actions"><button id="continueStep" class="ghost">验证 / 填写完成，继续当前步骤</button><button id="orders" class="ghost">查看官网订单</button><button id="resume" class="ghost">此商品已处理，继续 / 结束</button></div></div>
+        <div id="attempts" class="task" hidden></div>
+      </section>
+      <section class="card control"><div class="section-heading"><div><span class="step">02</span><h2>库存雷达</h2></div><span class="badge" id="running">未启动</span></div>
+        <p class="radar-summary" id="radarSummary" role="status">雷达待命</p>
+        <label class="mode"><input type="radio" name="mode" value="monitor" checked><div><strong>雷达扫描 · 只提醒</strong><small>扫描所选 SKU，厦门有货时发送桌面提醒</small></div></label>
+        <label class="mode"><input type="radio" name="mode" value="rush"><div><strong>雷达扫描 · 自动锁单</strong><small>核对后提交一次订单，成功后持续提醒付款</small></div></label>
+        <label>购买方式<select id="strategy"><option value="first_available">按优先顺序择一购买</option><option value="each_target">各 SKU 分别购买（逐个处理）</option></select></label>
+        <div class="form-grid"><label>厦门邮编<input id="postcode" value="361000" maxlength="6" inputmode="numeric"></label><label>检查间隔<select id="interval"><option value="60" selected>60 秒（日常扫描）</option><option value="120">120 秒（较保守）</option><option value="300">5 分钟（低频）</option></select></label></div>
+        <label>取货门店<select id="store"><option value="">厦门所有直营店</option></select></label>
+        <label class="toggle" hidden><input id="fallbackDelivery" type="checkbox"> 配送备选已禁用</label>
+        <label class="toggle"><input id="testOnly" type="checkbox" checked> 测试到订单复核页，不提交订单</label>
+        <label>付款方式<select id="payment"><option value="installment_or_alipay">免息分期优先，不支持则支付宝</option><option value="alipay">支付宝</option><option value="wechat">微信支付</option></select></label>
+        <div class="form-grid"><label>分期银行<input id="bank" placeholder="按官网名称填写；留空用支付宝"></label><label>分期期数<select id="periods"><option value="24">24 期</option><option value="12">12 期</option><option value="6">6 期</option><option value="3">3 期</option></select></label></div>
+        <p class="muted">只扫描厦门自提。结账门店、日期或时段不可用时返回雷达，当前 SKU 至少等 1 分钟再尝试锁单。不会切换配送；分期只选择明确免息且支持所选期数的方案。</p>
+        <p class="muted">面板和后台均至少间隔 60 秒；关闭浏览器或电脑休眠会暂停。数量需要在结账时确认。</p>
+        <p class="muted">快捷启动保留所选扫描间隔、按优先顺序只锁一单、正式提交及当前付款设置。启动前检查已保存提货资料；已填账号不代表官网已登录。</p>
+        <button id="testNotification" class="ghost">测试桌面提醒</button><p id="notificationStatus" class="muted" role="status" aria-live="polite"></p>
+        <div class="actions"><button id="radar">启动库存雷达 · 自动锁单</button><button id="start" class="ghost">按当前设置启动</button><button id="stop" class="ghost">停止扫描</button><button id="check" class="ghost">查一次</button><button id="inspectWebsite" class="ghost">打开官网检查</button></div>
+        <p class="muted">541 首次等 15 分钟，2 小时内再出现等 30 分钟，再次等 60 分钟；恢复后每轮分别至少 60 / 120 / 300 秒。503 遵守官网重试时间。停止、启动和“查一次”不会绕过等待，失败时库存记为未知。</p>
+        <p class="muted" id="lastCheck">尚未查询</p>
+        <p class="boundary">“启动库存雷达”会正式提交所选商品订单，金额不超过所选官网单价 × 数量。需要演练时勾选测试模式，使用“按当前设置启动”。锁单时暂停扫描，成功后提醒付款；登录、资料或金额卡住会提醒你处理。</p>
+      </section>
+      <section class="card profile"><div class="section-heading"><div><span class="step">03</span><h2>联系人与地址</h2></div><label class="toggle"><input id="autofill" type="checkbox" checked> 自动填写空白字段</label></div>
+        <div class="profile-status" id="profileStatus" role="status" aria-live="polite"><strong id="profileStatusTitle">正在读取本机资料…</strong><p id="profileStatusDetail"></p><p id="profileCompleteness"></p></div>
+        <form id="profileForm" autocomplete="off">
+          <div class="profile-grid"><label>姓<input name="lastName" placeholder="与取货证件一致"></label><label>名<input name="firstName"></label><label>联系电话<input name="phone" type="tel"></label><label>联系邮箱<input name="email" type="email"></label><label>省份<input name="province" value="福建省"></label><label>城市<input name="city" value="厦门市"></label><label>区县<input name="district"></label><label>邮编<input name="postcode"></label><label class="wide">详细地址<input name="line1"></label><label class="wide">地址补充<input name="line2"></label></div>
+          <div class="form-grid"><label>Apple 账号<input name="accountId" placeholder="邮箱或手机号，用于快捷登录"></label><label>取货证件号码后四位（可留空）<input name="idSuffix" maxlength="4" pattern="[0-9Xx]{4}" placeholder="官网要求时使用；不保存完整证件号"></label></div>
+          <div class="actions"><button id="saveProfile" type="submit">保存到本机</button><span id="profileSaveHint" class="muted"></span><button id="import" type="button" class="ghost">导入原 .env 信息</button><button id="clear" type="button" class="text-button">清空个人信息</button><input id="envFile" type="file" accept=".env,.txt" hidden></div>
+          <p class="muted">厦门自提使用联系人和必要的证件后四位；地址用于官网要求的步骤。只保存账号名称，不保存密码或验证码。快捷登录使用浏览器保存的密码；双重认证和设备确认由本人完成。</p>
+        </form>
+      </section>
+    </div>
+    <footer>个人工具 · 非 Apple 官方产品 · 浏览器验证和双重认证由本人完成</footer>
+  </main>
+  <script defer src="boot.js"></script>
+</body></html>
