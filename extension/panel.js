@@ -25,8 +25,6 @@ function renderProfileStatus() {
   const profile = state.profile || {}, saved = profileKeys.some(key => Boolean(profile[key]));
   const tone = profileSaveError ? 'error' : profileDirty ? 'dirty' : saved ? 'saved' : 'empty';
   $('profileStatus').className = 'profile-status ' + tone;
-  $('profileIndicator').className = 'profile-indicator ' + tone;
-  $('profileIndicator').textContent = profileSaving ? '个人资料：保存中…' : profileSaveError ? '个人资料：保存失败，点击查看' : profileDirty ? '个人资料：有修改未保存，点击查看' : saved ? '个人资料：已保存到本机，点击查看' : '个人资料：尚未保存，点击填写';
   $('profileStatusTitle').textContent = profileSaving ? '正在保存到本机…' : profileSaveError ? '保存失败，修改尚未保存' : profileDirty ? '有修改未保存' : saved ? '已保存到本机' : '尚未保存个人信息';
   $('profileStatusDetail').textContent = profileSaveError || (profileDirty ? '当前修改只在表单中，请点击下方“保存到本机”。' : saved ? state.profileSavedAt ? '最近保存：' + new Date(state.profileSavedAt).toLocaleString('zh-CN') + '；重新打开插件仍可读取。' : '已从本机存储读取资料；此前保存时间未记录。' : '填写后请点击“保存到本机”，仅输入或导入表单不会保存。');
   const labels = {lastName:'姓',firstName:'名',phone:'电话',email:'联系邮箱'};
@@ -169,6 +167,38 @@ function renderRadar() {
     }
   }
   $('radarSummary').textContent = text;
+  const rows = state.results?.rows || [];
+  const retryAt = Math.max(state.stockBlock?.until || 0, monitor.retryAt || 0);
+  const stale = state.results?.stale || retryAt > Date.now();
+  const available = stale ? [] : rows.filter(row => row.state === 'available');
+  const interval = effectiveScanInterval(state.settings, state.stockThrottle);
+  const remaining = Math.max(0, Math.ceil(((monitor.lastStartedAt || 0) + interval * 1000 - Date.now()) / 1000));
+  const checked = state.results?.checkedAt ? '最近成功查询 ' + new Date(state.results.checkedAt).toLocaleTimeString('zh-CN') : '尚未完成库存查询';
+  let title = monitor.running ? '正在扫描厦门自提库存' : '雷达待命';
+  let detail = monitor.running ? `${monitor.scans || 0} 轮已完成 · ${state.targets?.length || 0} 个 SKU · ${remaining ? remaining + ' 秒后可再扫描' : '等待下一轮查询'}` : '选择商品并启动雷达，等待厦门自提有货';
+  let tone = monitor.running ? 'scanning' : 'idle', icon = monitor.running ? '◉' : '○', anchor = '#targets';
+  if (payment) {
+    title = '订单已生成，请付款'; detail = '已取得官网订单号 · 点击查看付款提醒'; tone = 'available'; icon = '✓'; anchor = '#paymentAlert';
+  } else if (task?.stage === 'uncertain') {
+    title = '订单结果待核实'; detail = task.note; tone = 'warning'; icon = '!'; anchor = '#task';
+  } else if (monitor.running && task?.stage === 'manual') {
+    title = '锁单暂停，需要你处理'; detail = task.note; tone = 'warning'; icon = '!'; anchor = '#task';
+  } else if (monitor.running && task && !['stopped', 'ordered', 'waiting_stock'].includes(task.stage)) {
+    title = '发现自提有货，正在锁单'; detail = task.note; tone = 'available'; icon = '◉'; anchor = '#task';
+  } else if (stale || monitor.error) {
+    title = '库存未知 · 查询暂不可用'; detail = retryAt > Date.now() ? `等待至 ${new Date(retryAt).toLocaleTimeString('zh-CN')} 再查询 · ${checked}` : `${monitor.error || '上次库存结果已失效'} · ${checked}`; tone = 'warning'; icon = '!';
+  } else if (available.length) {
+    title = `厦门自提有货 · ${available.length} 个配置`; detail = checked + ' · 库存以结账页为准'; tone = 'available'; icon = '✓';
+  } else if (rows.length) {
+    title = rows.some(row => row.state === 'unknown') ? '部分库存未知' : '暂未发现厦门自提库存';
+    if (!monitor.running) detail = '扫描已停止 · ' + checked;
+    if (rows.some(row => row.state === 'unknown')) { tone = 'warning'; icon = '!'; }
+  }
+  $('radarIndicator').className = 'radar-indicator ' + tone;
+  $('radarIndicator').href = anchor;
+  $('radarIndicatorTitle').textContent = title;
+  $('radarIndicatorDetail').textContent = detail;
+  $('radarIndicatorIcon').textContent = icon;
 }
 function render() {
   renderProfileStatus();

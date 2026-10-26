@@ -6,7 +6,7 @@
     <header><div class="brand"><img src="icon.png" alt=""><div><span class="eyebrow">LOCAL · APPLE STORE</span><h1>抢看看</h1></div></div><button id="login" class="ghost">苹果账号快捷登录</button></header>
     <div class="intro"><p>库存雷达，等自提有货就锁单。</p><span>只看厦门自提 · 核对后提交一次 · 提醒你付款</span></div>
     <div id="notice" role="status" aria-live="polite">先读取官网型号，添加你想购买的配置。</div>
-    <a id="profileIndicator" class="profile-indicator" href="#profileStatus">正在读取个人资料…</a>
+    <a id="radarIndicator" class="radar-indicator" href="#targets"><span id="radarIndicatorIcon" aria-hidden="true">○</span><div><strong id="radarIndicatorTitle">雷达待命</strong><small id="radarIndicatorDetail">正在读取扫描状态…</small></div></a>
     <div id="profileToast" class="profile-toast" role="status" aria-live="polite" hidden><span id="profileToastIcon" aria-hidden="true">✓</span><strong id="profileToastTitle"></strong><p id="profileToastDetail"></p><button id="dismissProfileToast" type="button" class="ghost">知道了</button></div>
     <section class="payment-alert" id="paymentAlert" hidden aria-live="polite"><h2>订单已生成，等你付款</h2><p id="paymentText"></p><div class="actions"><button id="openPayment">打开官网付款</button><button id="acknowledgePayment" class="ghost">已知晓，停止提醒</button></div><p class="muted">未点知晓时，每分钟发送一次桌面提醒。支付期限和库存保留以官网订单状态为准。</p></section>
     <div class="layout">

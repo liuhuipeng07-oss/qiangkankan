@@ -17,7 +17,7 @@ with sync_playwright() as p,tempfile.TemporaryDirectory(dir=ROOT) as temporary:
         expect(panel.locator('#profileStatusTitle')).to_have_text('已保存到本机')
         expect(panel.locator('#profileStatusDetail')).to_contain_text('最近保存')
         expect(panel.locator('#profileCompleteness')).to_contain_text('提货资料齐全')
-        expect(panel.locator('#profileIndicator')).to_contain_text('已保存到本机')
+        expect(panel.locator('#radarIndicatorTitle')).to_have_text('雷达待命')
         expect(panel.locator('#profileToastTitle')).to_have_text('保存成功 · 已存到本机')
         expect(panel.locator('#profileToast')).to_be_visible()
         panel.screenshot(path=str(ROOT/'profile-notice-preview.png'))

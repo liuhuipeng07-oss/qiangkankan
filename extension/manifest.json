@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "抢看看",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "日常库存雷达、仅厦门自提、自动锁单与持续付款提醒。个人信息仅保存在本机。",
   "minimum_chrome_version": "120",
   "permissions": ["storage", "alarms", "notifications", "tabs"],

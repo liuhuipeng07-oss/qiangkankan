@@ -1,6 +1,6 @@
 # 抢看看
 
-用于 Apple 中国官网的厦门自提库存监控与辅助结账浏览器扩展。当前版本 **0.3.5**，Chrome / Edge Manifest V3。
+用于 Apple 中国官网的厦门自提库存监控与辅助结账浏览器扩展。当前版本 **0.3.6**，Chrome / Edge Manifest V3。
 
 ## 功能
 
